@@ -1,43 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The merger</title>
     <link href="index.css" rel="stylesheet"/>
-  </head>
-  <body>
-    <div id="menu" class="container">
-        <h1>Diner-PancakHouse Menu</h1>
-    </div>
+    <style>
+        ul.topnav {
+            list-style-type: none;
+            margin-top: 1%;
+            margin-bottom: 5%;
+            padding: 0;
+            overflow: hidden;
+            background-color: #ce6d47;
+        }
 
-    <script>
-      let host = "http://localhost:8080";
-      let menuDiv = document.getElementById("menu");
+        ul.topnav li {float: left;}
 
-      displayTheMenu();
+        ul.topnav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
 
-      async function getTheMenu() {
-        let response = await fetch(host + "/merger");
+        ul.topnav li a:hover:not(.active) {background-color: #f8ebcb;}
+
+        ul.topnav li a.active {background-color:#af412a; }
+
+        ul.topnav li.right {float: right;}
+
+        @media screen and (max-width: 600px) {
+            ul.topnav li.right, 
+            ul.topnav li {float: none;}
+        }
+        
+        /* Apply same styles to the login link */
+        ul.topnav li a[href="login.html"] {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        ul.topnav li a[href="login.html"]:hover:not(.active) {
+            background-color: #f8ebcb;
+        }
+        
+        ul.topnav li a[href="login.html"].active {
+            background-color: #af412a;
+        }
+    </style>
+</head>
+<body>
+<ul id="navbar" class="topnav">
+    <li><a href="#" onclick="displayTheMenu()">All Menus</a></li>
+    <li><a href="#" onclick="displayMenu('breakfast')">Breakfast</a></li>
+    <li><a href="#" onclick="displayMenu('lunch')">Lunch</a></li>
+    <li><a href="#" onclick="displayMenu('dinner')">Dinner</a></li>
+    <li><a href="#" onclick="displayMenu('vegetarian')">Vegetarian</a></li>
+    <li class="right"><a class="active" href="login.html">Login</a></li> <!-- Add active class to the login link -->
+</ul>
+
+<div id="menu" class="container">
+    <h1>Diner-PancakeHouse Menu</h1>
+</div>
+
+<script>
+    let host = "http://localhost:8080";
+    let menuDiv = document.getElementById("menu");
+
+    // Function to fetch menu items based on category
+    async function getMenu(category) {
+        let response = await fetch(host + "/merger/" + category);
         let menu = await response.json();
         return menu;
-      }
+    }
 
-      async function displayTheMenu() {
-        let menu = await getTheMenu();
+    // Function to display menu items based on category
+    async function displayMenu(category) {
+        menuDiv.innerHTML = ""; // Clear previous menu items
+        let menu = await getMenu(category);
         for (let menuItem of menu) {
-          let div = document.createElement("div");
-          div.class = "menu-item";
-          div.innerHTML = `
-               <div class="menu-item">
+            let div = document.createElement("div");
+            div.className = "menu-item"; // Fix: Use className instead of class
+            div.innerHTML = `
                 <div class="item-name">${menuItem.name}</div>
                 <div class="item-description">${menuItem.description}</div>
                 <div class="item-price">${menuItem.price}</div>
-               </div>
-               `;
-          menuDiv.appendChild(div);
+            `;
+            menuDiv.appendChild(div);
         }
-      }
-    </script>
-  </body>
+    }
+
+    // Function to display all menu items
+    async function displayTheMenu() {
+        menuDiv.innerHTML = ""; // Clear previous menu items
+        let menu = await getMenu("");
+        for (let menuItem of menu) {
+            let div = document.createElement("div");
+            div.className = "menu-item"; // Fix: Use className instead of class
+            div.innerHTML = `
+                <div class="item-name">${menuItem.name}</div>
+                <div class="item-description">${menuItem.description}</div>
+                <div class="item-price">${menuItem.price}</div>
+            `;
+            menuDiv.appendChild(div);
+        }
+    }
+
+    // Display all menus by default
+    displayTheMenu();
+</script>
+</body>
 </html>
+```
